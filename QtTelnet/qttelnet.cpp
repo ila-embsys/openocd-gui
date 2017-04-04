@@ -76,6 +76,7 @@
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QBuffer>
 #include <QtCore/QVarLengthArray>
+#include <QtEndian>
 
 #ifdef Q_WS_WIN
 #  include <winsock2.h>
@@ -485,9 +486,9 @@ QByteArray QtTelnetAuthNull::authStep(const QByteArray &data)
     if (data.size() < 2 || data[1] != Common::SEND)
         return QByteArray();
 
-    char buf[8] = {Common::IAC, Common::SB, Common::Authentication,
-                   Common::IS, Auth::AUTHNULL, 0, // CLIENT|ONE-WAY
-                   Common::IAC, Common::SE};
+    char buf[8] = {char(Common::IAC), char(Common::SB), char(Common::Authentication),
+                   char(Common::IS), char(Auth::AUTHNULL), 0, // CLIENT|ONE-WAY
+                   char(Common::IAC), char(Common::SE)};
     setState(AuthSuccess);
     return QByteArray(buf, sizeof(buf));
 }
@@ -662,11 +663,11 @@ void QtTelnetPrivate::parseSubTT(const QByteArray &data)
     if (data.size() < 2 || data[1] != Common::SEND)
         return;
 
-    const char c1[4] = { Common::IAC, Common::SB,
-                         Common::TerminalType, Common::IS};
+    const char c1[4] = { char(Common::IAC), char(Common::SB),
+                         char(Common::TerminalType), char(Common::IS)};
     sendCommand(c1, sizeof(c1));
     sendString("UNKNOWN");
-    const char c2[2] = { Common::IAC, Common::SE };
+    const char c2[2] = { char(Common::IAC), char(Common::SE) };
     sendCommand(c2, sizeof(c2));
 }
 
@@ -850,11 +851,11 @@ void QtTelnetPrivate::sendWindowSize()
     if (!q->isValidWindowSize())
         return;
 
-    short h = htons(windowSize.height());
-    short w = htons(windowSize.width());
-    const char c[9] = { Common::IAC, Common::SB, Common::NAWS,
+    short h = qToBigEndian(windowSize.height());
+    short w = qToBigEndian(windowSize.width());
+    const char c[9] = { char(Common::IAC), char(Common::SB), char(Common::NAWS),
                         (w & 0x00ff), (w >> 8), (h & 0x00ff), (h >> 8),
-                        Common::IAC, Common::SE };
+                        char(Common::IAC), char(Common::SE) };
     sendCommand(c, sizeof(c));
 }
 
@@ -898,7 +899,7 @@ void QtTelnetPrivate::sendCommand(const QByteArray &command)
 
 void QtTelnetPrivate::sendCommand(const char operation, const char option)
 {
-    const char c[3] = { Common::IAC, operation, option };
+    const char c[3] = { char(Common::IAC), operation, option };
     sendCommand(c, 3);
 }
 
@@ -1110,7 +1111,7 @@ void QtTelnet::sendControl(Control ctrl)
     default:
         return;
     }
-    const char command[2] = {Common::IAC, c};
+    const char command[2] = {char(Common::IAC), c};
     d->sendCommand(command, sizeof(command));
     if (sendsync)
         sendSync();
@@ -1242,7 +1243,7 @@ void QtTelnet::sendSync()
                         // sending the SYNC sequence.
     int s = d->socket->socketDescriptor();
     char tosend = (char)Common::DM;
-    ::send(s, &tosend, 1, MSG_OOB); // Send the DATA MARK as out-of-band
+    //::send(s, &tosend, 1, MSG_OOB); // Send the DATA MARK as out-of-band
 }
 
 /*!

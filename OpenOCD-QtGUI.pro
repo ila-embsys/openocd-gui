@@ -3,10 +3,11 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = 
+TARGET = openocdgui
 DEPENDPATH += . QtTelnet
 INCLUDEPATH += . QtTelnet
 
+QT += widgets
 QT += network
 HEADERS += mainwidget.h QtTelnet/qttelnet.h
 FORMS += mainwidget.ui
