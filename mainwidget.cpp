@@ -190,7 +190,7 @@ void MainWidget::ramFileSelect()
 {
 	QSettings set;
     QFileDialog fDlg(this, "Select RAM Image", 
-					 set.value("recent-ram-image-file-path").toString(), 
+					 set.value("lineEditRam").toString(), 
 					 "*.bin *.BIN *.elf *.ELF");
 
     if(fDlg.exec())
@@ -222,13 +222,12 @@ void MainWidget::flashFileSelect()
 {
 	QSettings set;
     QFileDialog fDlg(this, "Select FLASH Image", 
-					 QFileInfo(set.value("recent-image-file", QDir::homePath()).toString()).absolutePath(), 
+					 set.value("lineEditFlash").toString(),
 					 "*.bin *.BIN *.elf *.ELF");
 
     if(fDlg.exec())
     {
         main->lineEditFlash->setText(fDlg.selectedFiles().at(0));
-        set.setValue("recent-image-file-path", fDlg.directory().absolutePath());
     }
 }
 
@@ -362,7 +361,8 @@ void MainWidget::ocdDaemonStart() // start OpenOCD with Config
 
         arguments << "-f" << interfaceConfig << "-f" << targetConfig;
         openOCD->start(path, arguments);
-        main->textEditOcdTerminal->append("GUI: OpenOCD daemon started");
+        main->textEditOcdTerminal->append("GUI: Starting OpenOCD daemon...");
+		main->textEditOcdTerminal->append(path + arguments.join(" "));
         main->pushButtonOcdDaemonStart->setText("Stop");
     }
     else
@@ -401,13 +401,12 @@ void MainWidget::selectConfigFile()
 {
 	QSettings set;
     QFileDialog fDlg(this, "Select GUI Configuration", 
-					 set.value("recent-openocd-gui-config-path", QDir::currentPath()).toString()
+					 set.value("lineEditGuiConfig").toString()
 					 , "*.openocd-gui.conf");
 
     if(fDlg.exec())
     {
         main->lineEditGuiConfig->setText(fDlg.selectedFiles().at(0));
-        set.setValue("recent-openocd-gui-config-file", fDlg.directory().absolutePath());
     }
 }
 
