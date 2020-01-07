@@ -15,4 +15,5 @@ SOURCES += main.cpp mainwidget.cpp QtTelnet/qttelnet.cpp
 
 DISTFILES += \
     CHANGELOG.md \
-    README.md
+    README.md \
+    at91sam7.openocd-gui.conf

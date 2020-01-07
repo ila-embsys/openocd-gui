@@ -7,5 +7,7 @@ OpenOCD GUI - Changelog
 * add about tab
 * removed integrated editor for openocd config file --> use external editor!
 * add separate QLineEdit for openocd interface and target
+* add verify image command for flash and ram
+* replaced many hard coded addresses and commands
 
 # v0.3.3 - Version from Sven Sperner

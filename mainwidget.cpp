@@ -207,14 +207,18 @@ void MainWidget::ramLoad() // download image to RAM
     if ((buffer[tmp-3] == 'e' && buffer[tmp-2] == 'l' && buffer[tmp-1] == 'f') ||
         (buffer[tmp-3] == 'E' && buffer[tmp-2] == 'L' && buffer[tmp-1] == 'F'))
     {
-        telnet->sendData("soft_reset_halt");
-        telnet->sendData("load_image " + main->lineEditRam->text() + " 0x0 elf");
+        telnet->sendData(main->lineEditSoftResetCmd->text());
+        telnet->sendData("load_image " + main->lineEditRam->text() + " " + 
+						 main->lineEditBaseAddress->text() + " " +
+						 "elf");
     }
     else if ((buffer[tmp-3] == 'b' && buffer[tmp-2] == 'i' && buffer[tmp-1] == 'n') ||
 	     (buffer[tmp-3] == 'B' && buffer[tmp-2] == 'I' && buffer[tmp-1] == 'N'))
     {
-        telnet->sendData("soft_reset_halt");
-        telnet->sendData("load_image " + main->lineEditRam->text() + " 0x200000 bin");
+        telnet->sendData(main->lineEditSoftResetCmd->text());
+        telnet->sendData("load_image " + main->lineEditRam->text() + " " + 
+						 main->lineEditRamAddress->text() + " " +
+						 "bin");
     }
 }
 
@@ -231,6 +235,7 @@ void MainWidget::flashFileSelect()
     }
 }
 
+// TODO Test Flash Write for ELF and BIN
 void MainWidget::flashLoad() // download image to FLASH
 {
 	QString buffer = main->lineEditFlash->text();
@@ -239,23 +244,37 @@ void MainWidget::flashLoad() // download image to FLASH
 	if ((buffer[tmp-3] == 'e' && buffer[tmp-2] == 'l' && buffer[tmp-1] == 'f') ||
 			(buffer[tmp-3] == 'E' && buffer[tmp-2] == 'L' && buffer[tmp-1] == 'F'))
 	{
-		telnet->sendData("soft_reset_halt");
+		telnet->sendData(main->lineEditSoftResetCmd->text());
 		if (main->checkBoxErase->isChecked())
-			telnet->sendData(main->lineEditFlashWriteCmd->text() + " erase " + main->lineEditFlash->text() + " 0x0 elf");
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + 
+							 main->lineEditFlashEraseCmd->text() + " " + 
+							 main->lineEditFlash->text() + " " + 
+							 main->lineEditBaseAddress->text() + " " + 
+							 "elf");
 		else
-			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + main->lineEditFlash->text() + " 0x0 elf");
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + 
+							 main->lineEditFlash->text() + " " + 
+							 main->lineEditBaseAddress->text() + " " + 
+							 "elf");
 	}
 	else if ((buffer[tmp-3] == 'b' && buffer[tmp-2] == 'i' && buffer[tmp-1] == 'n') ||
 			 (buffer[tmp-3] == 'B' && buffer[tmp-2] == 'I' && buffer[tmp-1] == 'N'))
 	{
-		telnet->sendData("soft_reset_halt");
+		telnet->sendData(main->lineEditSoftResetCmd->text());
 		if (main->checkBoxErase->isChecked())
 		{
-			telnet->sendData(main->lineEditFlashWriteCmd->text() + " erase " + main->lineEditFlash->text() + " 0x100000 bin");
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + 
+							 main->lineEditFlashEraseCmd->text() + " " + 
+							 main->lineEditFlash->text() + " " + 
+							 main->lineEditFlashAddress->text() + " " + 
+							 "bin");
 		}
 		else
 		{
-			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + main->lineEditFlash->text() + " 0x100000 bin");
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + 
+							 main->lineEditFlash->text() + " " +
+							 main->lineEditFlashAddress->text() + " " + 
+							 "bin");
 		}
 	}
 }
@@ -265,6 +284,7 @@ void MainWidget::flashLoad() // download image to FLASH
 // command buttons:
 void MainWidget::softReset()
 {
+	// soft_reset_halt
     telnet->sendData(main->lineEditSoftResetCmd->text());
 }
 
@@ -456,8 +476,11 @@ void MainWidget::loadConfiguration()
             else if (buflist[0] == "FLASHUNLOCK") {
                 main->lineEditFlashUnlockCmd->setText(buflist[2]+" "+buflist[3]+" "+buflist[4]+" "+buflist[5]+" "+buflist[6]);
             }
-            else if (buflist[0] == "FLASHWRITE") {
+			else if (buflist[0] == "FLASHWRITE") {
                 main->lineEditFlashWriteCmd->setText(buflist[2]+" "+buflist[3]);
+            }
+			else if (buflist[0] == "VERIFYIMAGE") {
+                main->lineEditVerifyImageCmd->setText(buflist[2]);
             }
             else if (buflist[0] == "ERASESUFFIX") {
                 main->lineEditEraseSuffix->setText(buflist[2]);
@@ -505,13 +528,14 @@ void MainWidget::saveConfiguration()
         cfgOut << "FLASHERASE = " << main->lineEditFlashEraseCmd->text() << " " << endl;
         cfgOut << "FLASHUNLOCK = " << main->lineEditFlashUnlockCmd->text() << " " << endl;
         cfgOut << "FLASHWRITE = " << main->lineEditFlashWriteCmd->text() << " " << endl;
+		cfgOut << "VERIFYIMAGE = " << main->lineEditVerifyImageCmd->text() << " " << endl;
         cfgOut << "ERASESUFFIX = " << main->lineEditEraseSuffix->text() << " " << endl;
         cfgOut << "RAMWRITE = " << main->lineEditRamWriteCmd->text() << " " << endl;
         cfgOut << "RESET = " << main->lineEditResetCmd->text() << " " << endl;
         cfgOut << "HALT = " << main->lineEditHaltCmd->text() << " " << endl;
         cfgOut << "RESUME = " << main->lineEditResumeCmd->text() << " " << endl;
         cfgOut << "POLL = " << main->lineEditPollCmd->text() << " " << endl;
-        cfgOut << "SOFTRESET = " << main->lineEditSoftResetCmd->text() << " " << endl;
+		cfgOut << "SOFTRESET = " << main->lineEditSoftResetCmd->text() << " " << endl;
         main->textEditOcdTerminal->append("GUI: GUI-Config saved as " + cfgFile.fileName());
     }
 }
@@ -557,11 +581,6 @@ void MainWidget::writeDefaultSettings()
 			set.setValue(defKey, defaultSettings[defKey]);
 		}
 	}
-}
-
-void MainWidget::on_pushButtonFlashVerify_clicked()
-{
-    // TODO verify
 }
 
 void MainWidget::on_pushButtonOcdShellClear_clicked()
@@ -617,9 +636,59 @@ void MainWidget::on_lineEditGuiConfig_textChanged(const QString &arg1)
 	set.setValue("lineEditGuiConfig", main->lineEditGuiConfig->text());
 }
 
-
 void MainWidget::on_tabWidget_currentChanged(int index)
 {
     QSettings set;
 	set.setValue("tabWidget", index);
+}
+
+// TODO Test Flash Verify for ELF and BIN
+void MainWidget::on_pushButtonFlashVerify_clicked()
+{
+	QString buffer = main->lineEditFlash->text();
+	
+    int tmp = buffer.size();
+    
+    if ((buffer[tmp-3] == 'e' && buffer[tmp-2] == 'l' && buffer[tmp-1] == 'f') ||
+        (buffer[tmp-3] == 'E' && buffer[tmp-2] == 'L' && buffer[tmp-1] == 'F'))
+    {
+        telnet->sendData(main->lineEditSoftResetCmd->text());
+        telnet->sendData(main->lineEditVerifyImageCmd->text() + " " + 
+						 main->lineEditFlash->text() + " " + 
+						 main->lineEditBaseAddress->text() + " elf");
+    }
+    else if ((buffer[tmp-3] == 'b' && buffer[tmp-2] == 'i' && buffer[tmp-1] == 'n') ||
+	     (buffer[tmp-3] == 'B' && buffer[tmp-2] == 'I' && buffer[tmp-1] == 'N'))
+    {
+        telnet->sendData(main->lineEditSoftResetCmd->text());
+        telnet->sendData(main->lineEditVerifyImageCmd->text() + " " + 
+						 main->lineEditFlash->text() + " " + 
+						 main->lineEditRamAddress->text() + " bin");
+    }
+}
+
+
+// TODO Test Ram Verify for ELF and BIN
+void MainWidget::on_pushButtonRamVerify_clicked()
+{
+	QString buffer = main->lineEditRam->text();
+	
+    int tmp = buffer.size();
+    
+    if ((buffer[tmp-3] == 'e' && buffer[tmp-2] == 'l' && buffer[tmp-1] == 'f') ||
+        (buffer[tmp-3] == 'E' && buffer[tmp-2] == 'L' && buffer[tmp-1] == 'F'))
+    {
+        telnet->sendData(main->lineEditSoftResetCmd->text());
+        telnet->sendData(main->lineEditVerifyImageCmd->text() + " " + 
+						 main->lineEditRam->text() + " " + 
+						 main->lineEditBaseAddress->text() + " elf");
+    }
+    else if ((buffer[tmp-3] == 'b' && buffer[tmp-2] == 'i' && buffer[tmp-1] == 'n') ||
+	     (buffer[tmp-3] == 'B' && buffer[tmp-2] == 'I' && buffer[tmp-1] == 'N'))
+    {
+        telnet->sendData(main->lineEditSoftResetCmd->text());
+        telnet->sendData(main->lineEditVerifyImageCmd->text() + " " + 
+						 main->lineEditRam->text() + " " + 
+						 main->lineEditRamAddress->text() + " bin");
+    }
 }

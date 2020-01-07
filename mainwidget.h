@@ -108,6 +108,8 @@ private slots:
 	
 	void on_tabWidget_currentChanged(int index);
 	
+	void on_pushButtonRamVerify_clicked();
+	
 private:
     Ui::MainWidget *main;
     QProcess *openOCD;
