@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 
 #define DIR_FILE_NAME "/tmp/oocdqt-recentdir.dat"
+#define DEFAULT_INTERFACES "/usr/local/share/openocd/scripts/interface"
+#define DEFAULT_TARGETS "/usr/local/share/openocd/scripts/target"
+#define DEFAULT_OPENOCD "/usr/bin/openocd"
 
 namespace Ui
 {
@@ -43,6 +46,7 @@ public:
 private:
     QString stripCR(const QString &msg);
     void removeEmptyLines();
+	void writeDefaultSettings();
 
 
 private slots:
@@ -69,25 +73,47 @@ private slots:
     void peripheralReset();
     void cpuReset();
 // openocd tab:
-    void ocdConfigFileSelect();
-    void ocdConfigStart();
+	void ocdInterfaceConfigFileSelect();
+	void ocdTargetConfigFileSelect();
+    void ocdDaemonStart();
     void openOcdMessage();
     void openOcdStdout();
     void openOcdStderr();
-    void editUndo();
-    void editRedo();
-    void editReload();
-    void editSave();
+
 // config tab
     void selectConfigFile();
     void loadConfiguration();
     void saveConfiguration();
 
+	void on_lineEditOcdInterfaceConfig_textChanged(const QString &arg1);
+	
+	void on_lineEditOcdTargetConfig_textChanged(const QString &arg1);
+	
+	void on_pushButtonFlashVerify_clicked();
+	
+	void on_pushButtonOcdShellClear_clicked();
+	
+	void on_checkBoxErase_stateChanged(int arg1);
+	
+	void on_lineEditFlash_textChanged(const QString &arg1);
+	
+	void on_lineEditHost_textChanged(const QString &arg1);
+	
+	void on_lineEditPort_textChanged(const QString &arg1);
+	
+	void on_lineEditGuiConfig_textChanged(const QString &arg1);
+	
+	
+	void on_lineEditRam_textChanged(const QString &arg1);
+	
+	void on_tabWidget_currentChanged(int index);
+	
 private:
     Ui::MainWidget *main;
     QProcess *openOCD;
     QtTelnet *telnet;
     QString recentDir;
+	QMap<QString, QString> defaultSettings;
 };
 
 #endif // MAINWIDGET_H

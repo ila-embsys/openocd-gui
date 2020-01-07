@@ -23,6 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+	application.setApplicationName("openocd-gui");
+	application.setOrganizationName("openocd-gui");
+	application.setApplicationVersion("0.4.0");
+	application.setApplicationDisplayName("OpenOCD GUI");
+	
     MainWidget widget;
     widget.show();
     return application.exec();

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>436</height>
+    <width>625</width>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,13 +17,181 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
+     <widget class="QWidget" name="tabOpenOCD">
+      <attribute name="title">
+       <string>OpenOCD</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelOcdConfig">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Interface Config:</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditRam</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="lineEditOcdInterfaceConfig">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="pushButtonOcdInterfaceConfigFile">
+           <property name="toolTip">
+            <string>browse for RAM image</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelOcdTargetConfig">
+           <property name="text">
+            <string>Target Config:</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditRam</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLineEdit" name="lineEditOcdTargetConfig">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QPushButton" name="pushButtonOcdTargetConfigFile">
+           <property name="toolTip">
+            <string>browse for RAM image</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>428</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="2" colspan="2">
+          <widget class="QPushButton" name="pushButtonOcdDaemonStart">
+           <property name="text">
+            <string>Start</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelOcdConfig_3">
+         <property name="text">
+          <string>Shell of openocd process:</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEditRam</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="textEditOcdTerminal">
+         <property name="font">
+          <font>
+           <family>Courier New</family>
+          </font>
+         </property>
+         <property name="cursor" stdset="0">
+          <cursorShape>IBeamCursor</cursorShape>
+         </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::DefaultContextMenu</enum>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>338</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonOcdShellClear">
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabTelnet">
       <attribute name="title">
        <string>Telnet</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="gridLayout_10">
        <item row="0" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
@@ -85,29 +253,36 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="labelFlash">
-         <property name="text">
-          <string>FLASH:</string>
-         </property>
-         <property name="buddy">
-          <cstring>lineEditFlash</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QLineEdit" name="lineEditFlash"/>
+       <item row="1" column="0" colspan="2">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelFlash">
+           <property name="text">
+            <string>FLASH:</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditFlash</cstring>
+           </property>
+          </widget>
          </item>
-         <item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEditFlash">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
           <widget class="QCheckBox" name="checkBoxErase">
            <property name="text">
             <string>Erase</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="3">
           <widget class="QPushButton" name="pushButtonFlashFile">
            <property name="toolTip">
             <string>browse for flash image</string>
@@ -117,7 +292,7 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="4">
           <widget class="QPushButton" name="pushButtonFlashLoad">
            <property name="toolTip">
             <string>load the flash image into the chip</string>
@@ -127,24 +302,37 @@
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="labelRam">
-         <property name="text">
-          <string>RAM:</string>
-         </property>
-         <property name="buddy">
-          <cstring>lineEditRam</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QLineEdit" name="lineEditRam"/>
+         <item row="0" column="5">
+          <widget class="QPushButton" name="pushButtonFlashVerify">
+           <property name="toolTip">
+            <string>load the flash image into the chip</string>
+           </property>
+           <property name="text">
+            <string>Verify</string>
+           </property>
+          </widget>
          </item>
-         <item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelRam">
+           <property name="text">
+            <string>RAM:</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditRam</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEditRam">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
           <widget class="QPushButton" name="pushButtonRamFile">
            <property name="toolTip">
             <string>browse for RAM image</string>
@@ -154,7 +342,7 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="4">
           <widget class="QPushButton" name="pushButtonRamLoad">
            <property name="toolTip">
             <string>Load the RAM image into the chip</string>
@@ -166,7 +354,7 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="labelOutput">
          <property name="text">
           <string>output:</string>
@@ -176,7 +364,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="2" column="1">
         <widget class="QTextEdit" name="textEditOutput">
          <property name="font">
           <font>
@@ -200,7 +388,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="labelInput">
          <property name="text">
           <string>input:</string>
@@ -210,7 +398,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="3" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLineEdit" name="lineEditInput"/>
@@ -224,7 +412,7 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="4" column="0" colspan="2">
         <widget class="QFrame" name="frameDevice">
          <property name="font">
           <font>
@@ -386,170 +574,6 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOpenOCD">
-      <attribute name="title">
-       <string>OpenOCD</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="labelOcdConfig">
-           <property name="text">
-            <string>OpenOCD-Config:</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditRam</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEditOcdConfig">
-           <property name="text">
-            <string>at91sam7_wiggler.cfg</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonOcdConfigFile">
-           <property name="toolTip">
-            <string>browse for RAM image</string>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonOcdConfigStart">
-           <property name="text">
-            <string>Start</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0">
-        <widget class="QTextEdit" name="textEditOcdConfig">
-         <property name="font">
-          <font>
-           <family>Courier New</family>
-          </font>
-         </property>
-         <property name="cursor" stdset="0">
-          <cursorShape>IBeamCursor</cursorShape>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::DefaultContextMenu</enum>
-         </property>
-         <property name="acceptDrops">
-          <bool>false</bool>
-         </property>
-         <property name="lineWrapMode">
-          <enum>QTextEdit::NoWrap</enum>
-         </property>
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonUndo">
-           <property name="text">
-            <string>Undo</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonRedo">
-           <property name="text">
-            <string>Redo</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonReload">
-           <property name="text">
-            <string>Reaload</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonSave">
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QTextEdit" name="textEditOcdTerminal">
-         <property name="font">
-          <font>
-           <family>Courier New</family>
-          </font>
-         </property>
-         <property name="cursor" stdset="0">
-          <cursorShape>IBeamCursor</cursorShape>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::DefaultContextMenu</enum>
-         </property>
-         <property name="acceptDrops">
-          <bool>false</bool>
-         </property>
-         <property name="lineWrapMode">
-          <enum>QTextEdit::NoWrap</enum>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tabConfig">
       <attribute name="title">
        <string>Config</string>
@@ -570,7 +594,7 @@ p, li { white-space: pre-wrap; }
          <item row="0" column="1">
           <widget class="QLineEdit" name="lineEditGuiConfig">
            <property name="text">
-            <string>openocd-qtgui.conf</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -880,41 +904,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="3" column="0">
         <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelFlashProbeCmd">
-           <property name="text">
-            <string>Flash Probe:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEditFlashProbeCmd">
-           <property name="text">
-            <string>flash probe 0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelFlashInfoCmd">
-           <property name="text">
-            <string>Flash Info:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEditFlashInfoCmd">
-           <property name="text">
-            <string>flash info 0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelFlashEraseCmd">
-           <property name="text">
-            <string>Flash Erase:</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="lineEditFlashEraseCmd">
            <property name="text">
@@ -929,10 +918,31 @@ p, li { white-space: pre-wrap; }
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEditFlashUnlockCmd">
+         <item row="7" column="0">
+          <widget class="QLabel" name="labelRamWriteCmd">
            <property name="text">
-            <string>flash protect 0 0 15</string>
+            <string>RAM Write:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEditFlashInfoCmd">
+           <property name="text">
+            <string>flash info 0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEditFlashProbeCmd">
+           <property name="text">
+            <string>flash probe 0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="labelFlashVerifyCmd">
+           <property name="text">
+            <string>Flash Verify:</string>
            </property>
           </widget>
          </item>
@@ -940,6 +950,34 @@ p, li { white-space: pre-wrap; }
           <widget class="QLabel" name="labelFlashWriteCmd">
            <property name="text">
             <string>Flash Write:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelFlashProbeCmd">
+           <property name="text">
+            <string>Flash Probe:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLineEdit" name="lineEditRamWriteCmd">
+           <property name="text">
+            <string>load_image</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelFlashInfoCmd">
+           <property name="text">
+            <string>Flash Info:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelFlashEraseCmd">
+           <property name="text">
+            <string>Flash Erase:</string>
            </property>
           </widget>
          </item>
@@ -961,17 +999,17 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="labelRamWriteCmd">
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="lineEditFlashUnlockCmd">
            <property name="text">
-            <string>RAM Write:</string>
+            <string>flash protect 0 0 15</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
-          <widget class="QLineEdit" name="lineEditRamWriteCmd">
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="lineEditFlashVerify">
            <property name="text">
-            <string>load_image</string>
+            <string>verify_image</string>
            </property>
           </widget>
          </item>
@@ -1015,6 +1053,41 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Help</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_9">
+       <item row="0" column="0">
+        <widget class="QTextEdit" name="textEditHelp">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:600;&quot;&gt;OpenOCD GUI V__VERSION__&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;Many config files for the openocd interface and target come with the installation of openocd. On Ubuntu for example they are in /usr/share/openocd/scripts/interface and ../target&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;Settings are stored in your home directory: ~/.config/openocd-gui/openocd-gui.conf&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;To restore defaults, please delete the according line in that file and restart OpenOCD GUI. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;Don't forget to set proper udev-rules for your interface!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:12pt; font-weight:600;&quot;&gt;About&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;This programm is written by Sven Sperner and Karl Zeilhofer using the &lt;/span&gt;&lt;a href=&quot;https://www.qt.io&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; text-decoration: underline; color:#0000ff;&quot;&gt;Qt5 SDK&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;The source code is hosted on &lt;/span&gt;&lt;a href=&quot;https://github.com/KarlZeilhofer/openocd-gui&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans';&quot;&gt;It is licensed under the GPL V3. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

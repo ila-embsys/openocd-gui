@@ -1,6 +1,7 @@
 /*
 Graphical frontend for the Open On-Chip Debugger
 Copyright (C) 2013 Sven Sperner
+Copyright (C) 2020 Karl Zeilhofer
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define SAM7_VERSION "0.3.3"
-
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include <QStringList>
@@ -26,19 +25,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QByteArray>
 #include <QRect>
 
+#include <QSettings>
 #include <iostream>
+#include <qmessagebox.h>
 using namespace std;
-
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent), main(new Ui::MainWidget)
 {
     main->setupUi(this);
 
     setGeometry(QRect(100,100,800,480));
-    setWindowTitle(QString("SAM7 openOCD GUI v") + SAM7_VERSION);
-
+	
+	// set version strin in about tab:
+	main->textEditHelp->setHtml(
+				main->textEditHelp->toHtml().
+				replace("__VERSION__", QCoreApplication::applicationVersion()));
+	main->textEditHelp->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
+	
     openOCD = new QProcess(this);
     telnet = new QtTelnet(this);
+	
+	
+
+	writeDefaultSettings();
+	
+	QSettings set;
+	if(set.value("first-run", true).toBool()){
+		set.setValue("first-run", false);
+
+		QMessageBox::information(this, "Firt run of OpenOCD GUI", 
+			 "This is your first execution of OpenOCD GUI. \n"
+			 "Default values are used. \n"
+			 "You can configure some of them in '~/.config/openocd-gui/openocd-gui.conf'.\n"
+			 "To return to defaults, delete the line with the parameter.\n"
+			 "If you do so, please close openocd-gui before that.");
+	}
+
+// load settings into line edits:
+	main->tabWidget->setCurrentIndex(set.value("tabWidget", 0).toInt());
+	
+	main->lineEditOcdInterfaceConfig->setText(set.value("lineEditOcdInterfaceConfig").toString());
+	main->lineEditOcdTargetConfig->setText(set.value("lineEditOcdTargetConfig").toString());
+	
+	main->lineEditRam->setText(set.value("lineEditRam").toString());
+	main->lineEditFlash->setText(set.value("lineEditFlash").toString());
+	
+	main->lineEditHost->setText(set.value("lineEditHost").toString());
+	main->lineEditPort->setText(set.value("lineEditPort").toString());
+	main->lineEditFlash->setText(set.value("lineEditFlash").toString());
+	main->checkBoxErase->setChecked(set.value("checkBoxErase").toBool());
+	main->lineEditRam->setText(set.value("lineEditRam").toString());
+	
+	main->lineEditGuiConfig->setText(set.value("lineEditGuiConfig").toString());
 
 // control buttons
     connect(main->pushButtonOocdConnect, SIGNAL(clicked()), this, SLOT(connectToServer()));
@@ -70,47 +108,22 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), main(new Ui::MainWidg
     connect(main->pushButtonCpuReset, SIGNAL(clicked()), this, SLOT(cpuReset()));
 
 // openocd tab
-    connect(main->pushButtonOcdConfigFile, SIGNAL(clicked()), this, SLOT(ocdConfigFileSelect()));
-    connect(main->pushButtonOcdConfigStart, SIGNAL(clicked()), this, SLOT(ocdConfigStart()));
+	connect(main->pushButtonOcdInterfaceConfigFile, SIGNAL(clicked()), this, SLOT(ocdInterfaceConfigFileSelect()));
+	connect(main->pushButtonOcdTargetConfigFile, SIGNAL(clicked()), this, SLOT(ocdTargetConfigFileSelect()));
+    connect(main->pushButtonOcdDaemonStart, SIGNAL(clicked()), this, SLOT(ocdDaemonStart()));
 
     connect(openOCD, SIGNAL(readyRead()), this, SLOT(openOcdMessage()));
     connect(openOCD, SIGNAL(readyReadStandardOutput()), this, SLOT(openOcdStdout()));
     connect(openOCD, SIGNAL(readyReadStandardError()), this, SLOT(openOcdStderr()));
 
-    connect(main->pushButtonUndo, SIGNAL(clicked()), this, SLOT(editUndo()));
-    connect(main->pushButtonRedo, SIGNAL(clicked()), this, SLOT(editRedo()));
-    connect(main->pushButtonReload, SIGNAL(clicked()), this, SLOT(editReload()));
-    connect(main->pushButtonSave, SIGNAL(clicked()), this, SLOT(editSave()));
-
 // configuration tab
     connect(main->pushButtonGuiConfigFile, SIGNAL(clicked()), this, SLOT(selectConfigFile()));
     connect(main->pushButtonGuiConfigLoad, SIGNAL(clicked()), this, SLOT(loadConfiguration()));
     connect(main->pushButtonGuiConfigSave, SIGNAL(clicked()), this, SLOT(saveConfiguration()));
-
-    QFile dirFile(DIR_FILE_NAME);
-    if (dirFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        QTextStream dirin(&dirFile);
-        recentDir = dirin.readLine(256);
-    }
-    
-    QFile cfgFile(main->lineEditOcdConfig->text());
-    if (cfgFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        QTextStream cfgin(&cfgFile);
-        main->textEditOcdConfig->setText(cfgin.readAll());
-    }
 }
 
 MainWidget::~MainWidget()
 {
-    QFile dirFile(DIR_FILE_NAME);
-    if (dirFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream out(&dirFile);
-        out << recentDir;
-    }
-
     delete main;
 }
 
@@ -123,7 +136,7 @@ void MainWidget::connectToServer()
 {
     if (main->pushButtonOocdConnect->text() == "Connect")
     {
-        telnet->connectToHost(main->lineEditHost->text(), main->lineEditPort->text().toInt());
+        telnet->connectToHost(main->lineEditHost->text(), quint16(main->lineEditPort->text().toInt()));
     }
     else
     {
@@ -149,7 +162,7 @@ void MainWidget::resetOocd()
     if (main->pushButtonOocdConnect->text() == "Disconnect")
     {
         telnet->close();
-        telnet->connectToHost(main->lineEditHost->text(), main->lineEditPort->text().toInt());
+        telnet->connectToHost(main->lineEditHost->text(), quint16(main->lineEditPort->text().toInt()));
         main->textEditOutput->append("GUI: Reset Connection");
     }
     else
@@ -175,12 +188,14 @@ void MainWidget::telnetData() // send command
 
 void MainWidget::ramFileSelect()
 {
-    QFileDialog fDlg(this, "Select RAM Image", recentDir, "*.bin *.BIN *.elf *.ELF");
+	QSettings set;
+    QFileDialog fDlg(this, "Select RAM Image", 
+					 set.value("recent-ram-image-file-path").toString(), 
+					 "*.bin *.BIN *.elf *.ELF");
 
     if(fDlg.exec())
     {
         main->lineEditRam->setText(fDlg.selectedFiles().at(0));
-        recentDir = fDlg.directory().absolutePath();
     }
 }
 
@@ -205,42 +220,45 @@ void MainWidget::ramLoad() // download image to RAM
 
 void MainWidget::flashFileSelect()
 {
-    QFileDialog fDlg(this, "Select FLASH Image", recentDir, "*.bin *.BIN *.elf *.ELF");
+	QSettings set;
+    QFileDialog fDlg(this, "Select FLASH Image", 
+					 QFileInfo(set.value("recent-image-file", QDir::homePath()).toString()).absolutePath(), 
+					 "*.bin *.BIN *.elf *.ELF");
 
     if(fDlg.exec())
     {
         main->lineEditFlash->setText(fDlg.selectedFiles().at(0));
-        recentDir = fDlg.directory().absolutePath();
+        set.setValue("recent-image-file-path", fDlg.directory().absolutePath());
     }
 }
 
 void MainWidget::flashLoad() // download image to FLASH
 {
-    QString buffer = main->lineEditFlash->text();
-    int tmp = buffer.size();
-    
-    if ((buffer[tmp-3] == 'e' && buffer[tmp-2] == 'l' && buffer[tmp-1] == 'f') ||
-        (buffer[tmp-3] == 'E' && buffer[tmp-2] == 'L' && buffer[tmp-1] == 'F'))
-    {
-        telnet->sendData("soft_reset_halt");
-        if (main->checkBoxErase->isChecked())
-            telnet->sendData(main->lineEditFlashWriteCmd->text() + " erase " + main->lineEditFlash->text() + " 0x0 elf");
-        else
-            telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + main->lineEditFlash->text() + " 0x0 elf");
-    }
-    else if ((buffer[tmp-3] == 'b' && buffer[tmp-2] == 'i' && buffer[tmp-1] == 'n') ||
-	     (buffer[tmp-3] == 'B' && buffer[tmp-2] == 'I' && buffer[tmp-1] == 'N'))
-    {
-        telnet->sendData("soft_reset_halt");
-        if (main->checkBoxErase->isChecked())
+	QString buffer = main->lineEditFlash->text();
+	int tmp = buffer.size();
+	
+	if ((buffer[tmp-3] == 'e' && buffer[tmp-2] == 'l' && buffer[tmp-1] == 'f') ||
+			(buffer[tmp-3] == 'E' && buffer[tmp-2] == 'L' && buffer[tmp-1] == 'F'))
 	{
-	    telnet->sendData(main->lineEditFlashWriteCmd->text() + " erase " + main->lineEditFlash->text() + " 0x100000 bin");
+		telnet->sendData("soft_reset_halt");
+		if (main->checkBoxErase->isChecked())
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " erase " + main->lineEditFlash->text() + " 0x0 elf");
+		else
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + main->lineEditFlash->text() + " 0x0 elf");
 	}
-        else
+	else if ((buffer[tmp-3] == 'b' && buffer[tmp-2] == 'i' && buffer[tmp-1] == 'n') ||
+			 (buffer[tmp-3] == 'B' && buffer[tmp-2] == 'I' && buffer[tmp-1] == 'N'))
 	{
-            telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + main->lineEditFlash->text() + " 0x100000 bin");
+		telnet->sendData("soft_reset_halt");
+		if (main->checkBoxErase->isChecked())
+		{
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " erase " + main->lineEditFlash->text() + " 0x100000 bin");
+		}
+		else
+		{
+			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + main->lineEditFlash->text() + " 0x100000 bin");
+		}
 	}
-    }
 }
 
 
@@ -303,36 +321,57 @@ void MainWidget::cpuReset()
 
 
 // openocd tab
-void MainWidget::ocdConfigFileSelect()
+void MainWidget::ocdInterfaceConfigFileSelect()
 {
-    QFileDialog fDlg(this, "Select OpenOCD Configuration", recentDir, "*.cfg *.conf *.config *.oocd *.open *.openocd");
+	QSettings set;
+    QFileDialog fDlg(this, "Select OpenOCD Interface Configuration", 
+					 set.value("lineEditOcdInterfaceConfig").toString(), 
+					 "*.cfg");
 
     if(fDlg.exec())
     {
-        main->lineEditOcdConfig->setText(fDlg.selectedFiles().at(0));
-        recentDir = fDlg.directory().absolutePath();
+        main->lineEditOcdInterfaceConfig->setText(fDlg.selectedFiles().at(0));
     }
-    editReload();
 }
 
-void MainWidget::ocdConfigStart() // start OpenOCD with Config
+// openocd tab
+void MainWidget::ocdTargetConfigFileSelect()
 {
-    if (main->pushButtonOcdConfigStart->text() == "Start")
+	QSettings set;
+    QFileDialog fDlg(this, "Select OpenOCD Target Configuration", 
+					 set.value("lineEditOcdTargetConfig").toString(), 
+					 "*.cfg");
+
+    if(fDlg.exec())
     {
-        QString path = "/usr/bin/openocd";
+        main->lineEditOcdTargetConfig->setText(fDlg.selectedFiles().at(0));
+    }
+}
+
+void MainWidget::ocdDaemonStart() // start OpenOCD with Config
+{
+	QSettings set;
+	
+    if (main->pushButtonOcdDaemonStart->text() == "Start")
+    {
+        QString path = set.value("openocd-bin-path").toString(); 
+		
         QStringList arguments;
-        arguments << "-f" << main->lineEditOcdConfig->text();
+		QString interfaceConfig = main->lineEditOcdInterfaceConfig->text();
+		QString targetConfig = main->lineEditOcdTargetConfig->text();
+
+        arguments << "-f" << interfaceConfig << "-f" << targetConfig;
         openOCD->start(path, arguments);
-        main->textEditOcdTerminal->append("GUI: OpenOCD started");
-        main->pushButtonOcdConfigStart->setText("Stop");
+        main->textEditOcdTerminal->append("GUI: OpenOCD daemon started");
+        main->pushButtonOcdDaemonStart->setText("Stop");
     }
     else
     {
         openOCD->terminate();
         if (!openOCD->waitForFinished(1000))
             openOCD->kill();
-        main->textEditOcdTerminal->append("GUI: OpenOCD stopped");
-        main->pushButtonOcdConfigStart->setText("Start");
+        main->textEditOcdTerminal->append("GUI: OpenOCD daemon stopped");
+        main->pushButtonOcdDaemonStart->setText("Start");
     }
 }
 
@@ -357,49 +396,18 @@ void MainWidget::openOcdStderr()
     s->setValue(s->maximum());
 }
 
-void MainWidget::editUndo()
-{
-    main->textEditOcdConfig->undo();
-}
-
-void MainWidget::editRedo()
-{
-    main->textEditOcdConfig->redo();
-}
-
-void MainWidget::editReload()
-{
-    QFile cfgFile(main->lineEditOcdConfig->text());
-    if (cfgFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        QTextStream cfgin(&cfgFile);
-        main->textEditOcdConfig->setText(cfgin.readAll());
-        main->textEditOcdTerminal->append("GUI: OpenOCD-Config loaded");
-    }
-}
-
-void MainWidget::editSave()
-{
-    QFile cfgFile(main->lineEditOcdConfig->text());
-    if (cfgFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QTextStream cfgout(&cfgFile);
-        cfgout << main->textEditOcdConfig->toPlainText();
-        main->textEditOcdTerminal->append("GUI: OpenOCD-Config saved");
-    }
-}
-
-
-
 // configuration tab
 void MainWidget::selectConfigFile()
 {
-    QFileDialog fDlg(this, "Select GUI Configuration", recentDir, "*.cfg *.conf *.config");
+	QSettings set;
+    QFileDialog fDlg(this, "Select GUI Configuration", 
+					 set.value("recent-openocd-gui-config-path", QDir::currentPath()).toString()
+					 , "*.openocd-gui.conf");
 
     if(fDlg.exec())
     {
         main->lineEditGuiConfig->setText(fDlg.selectedFiles().at(0));
-        recentDir = fDlg.directory().absolutePath();
+        set.setValue("recent-openocd-gui-config-file", fDlg.directory().absolutePath());
     }
 }
 
@@ -518,10 +526,101 @@ QString MainWidget::stripCR(const QString &msg)
     nmsg.remove('\r');
     //nmsg.remove('\n\r\n\r');
     nmsg.remove(QRegExp("\033\\[[0-9;]*[A-Za-z]")); // Also remove terminal control codes
-    return nmsg.isEmpty() ? NULL : nmsg;
+    return nmsg.isEmpty() ? nullptr : nmsg;
 }
 
 void MainWidget::removeEmptyLines()
 {
+	
+}
 
+void MainWidget::writeDefaultSettings()
+{
+	QSettings set;
+	QStringList keys = set.allKeys();
+	
+	defaultSettings.clear();
+	defaultSettings["first-run"] = "true";
+	defaultSettings["openocd-bin-path"] = "/usr/bin/openocd";
+	
+	defaultSettings["lineEditOcdInterfaceConfig"] = "/usr/local/share/openocd/scripts/interface/openocd-usb.cfg";
+	defaultSettings["lineEditOcdTargetConfig"] = "/usr/local/share/openocd/scripts/target/sam7se512.cfg";
+	
+	defaultSettings["lineEditHost"] = "localhost";
+	defaultSettings["lineEditPort"] = "4444";
+	defaultSettings["checkBoxErase"] = "false";
+	defaultSettings["lineEditGuiConfig"] = "/usr/share/openocd-gui/at91sam7.openocd-gui.conf";
+	
+	for(int i=0; i<defaultSettings.size(); i++){
+		QString defKey = defaultSettings.keys().at(i);
+		
+		if(set.contains(defKey) == false){
+			set.setValue(defKey, defaultSettings[defKey]);
+		}
+	}
+}
+
+void MainWidget::on_pushButtonFlashVerify_clicked()
+{
+    // TODO verify
+}
+
+void MainWidget::on_pushButtonOcdShellClear_clicked()
+{
+    main->textEditOcdTerminal->clear();
+}
+
+void MainWidget::on_lineEditOcdInterfaceConfig_textChanged(const QString &arg1)
+{
+	QSettings set;
+	set.setValue("lineEditOcdInterfaceConfig", main->lineEditOcdInterfaceConfig->text());
+}
+
+void MainWidget::on_lineEditOcdTargetConfig_textChanged(const QString &arg1)
+{
+	QSettings set;
+	set.setValue("lineEditOcdTargetConfig", main->lineEditOcdTargetConfig->text());
+}
+
+void MainWidget::on_lineEditHost_textChanged(const QString &arg1)
+{
+	QSettings set;
+	set.setValue("lineEditHost", main->lineEditHost->text());
+}
+
+void MainWidget::on_lineEditPort_textChanged(const QString &arg1)
+{
+	QSettings set;
+	set.setValue("lineEditPort", main->lineEditPort->text());
+}
+
+void MainWidget::on_lineEditFlash_textChanged(const QString &arg1)
+{
+    QSettings set;
+	set.setValue("lineEditFlash", main->lineEditFlash->text());
+}
+
+void MainWidget::on_checkBoxErase_stateChanged(int arg1)
+{
+	QSettings set;
+	set.setValue("checkBoxErase", main->checkBoxErase->isChecked());
+}
+
+void MainWidget::on_lineEditRam_textChanged(const QString &arg1)
+{
+	QSettings set;
+	set.setValue("lineEditRam", main->lineEditRam->text());
+}
+
+void MainWidget::on_lineEditGuiConfig_textChanged(const QString &arg1)
+{
+	QSettings set;
+	set.setValue("lineEditGuiConfig", main->lineEditGuiConfig->text());
+}
+
+
+void MainWidget::on_tabWidget_currentChanged(int index)
+{
+    QSettings set;
+	set.setValue("tabWidget", index);
 }
