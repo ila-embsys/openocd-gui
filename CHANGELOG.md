@@ -9,5 +9,6 @@ OpenOCD GUI - Changelog
 * add separate QLineEdit for openocd interface and target
 * add verify image command for flash and ram
 * replaced many hard coded addresses and commands
+* quick tests with an AT91SAM7S256
 
 # v0.3.3 - Version from Sven Sperner

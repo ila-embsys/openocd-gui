@@ -305,7 +305,7 @@
          <item row="0" column="5">
           <widget class="QPushButton" name="pushButtonFlashVerify">
            <property name="toolTip">
-            <string>load the flash image into the chip</string>
+            <string>compares the flash content with a given bin or elf file</string>
            </property>
            <property name="text">
             <string>Verify</string>
@@ -355,7 +355,7 @@
          <item row="1" column="5">
           <widget class="QPushButton" name="pushButtonRamVerify">
            <property name="toolTip">
-            <string>load the flash image into the chip</string>
+            <string>compares the RAM content with a given bin or elf file</string>
            </property>
            <property name="text">
             <string>Verify</string>

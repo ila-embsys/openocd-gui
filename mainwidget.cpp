@@ -247,7 +247,7 @@ void MainWidget::flashLoad() // download image to FLASH
 		telnet->sendData(main->lineEditSoftResetCmd->text());
 		if (main->checkBoxErase->isChecked())
 			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + 
-							 main->lineEditFlashEraseCmd->text() + " " + 
+							 main->lineEditEraseSuffix->text() + " " + 
 							 main->lineEditFlash->text() + " " + 
 							 main->lineEditBaseAddress->text() + " " + 
 							 "elf");
@@ -264,7 +264,7 @@ void MainWidget::flashLoad() // download image to FLASH
 		if (main->checkBoxErase->isChecked())
 		{
 			telnet->sendData(main->lineEditFlashWriteCmd->text() + " " + 
-							 main->lineEditFlashEraseCmd->text() + " " + 
+							 main->lineEditEraseSuffix->text() + " " + 
 							 main->lineEditFlash->text() + " " + 
 							 main->lineEditFlashAddress->text() + " " + 
 							 "bin");
@@ -663,7 +663,7 @@ void MainWidget::on_pushButtonFlashVerify_clicked()
         telnet->sendData(main->lineEditSoftResetCmd->text());
         telnet->sendData(main->lineEditVerifyImageCmd->text() + " " + 
 						 main->lineEditFlash->text() + " " + 
-						 main->lineEditRamAddress->text() + " bin");
+						 main->lineEditFlashAddress->text() + " bin");
     }
 }
 
@@ -691,4 +691,9 @@ void MainWidget::on_pushButtonRamVerify_clicked()
 						 main->lineEditRam->text() + " " + 
 						 main->lineEditRamAddress->text() + " bin");
     }
+}
+
+void MainWidget::on_pushButtonSubmit_clicked()
+{
+    telnet->sendData(main->lineEditInput->text());
 }

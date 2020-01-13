@@ -110,6 +110,8 @@ private slots:
 	
 	void on_pushButtonRamVerify_clicked();
 	
+	void on_pushButtonSubmit_clicked();
+	
 private:
     Ui::MainWidget *main;
     QProcess *openOCD;
