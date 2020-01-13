@@ -98,12 +98,12 @@ class QtTelnetAuth
 public:
     enum State { AuthIntermediate, AuthSuccess, AuthFailure };
 
-    QtTelnetAuth(char code) : st(AuthIntermediate), cd(code) {};
+    QtTelnetAuth(char code) : st(AuthIntermediate), cd(code) {}
     virtual ~QtTelnetAuth() {}
 
     int code() const { return cd; }
     State state() const { return st; }
-    void setState(State state) { st = state; };
+    void setState(State state) { st = state; }
 
     virtual QByteArray authStep(const QByteArray &data) = 0;
 
@@ -555,10 +555,10 @@ public slots:
 };
 
 QtTelnetPrivate::QtTelnetPrivate(QtTelnet *parent)
-    : q(parent), socket(0), notifier(0),
+    : q(parent), socket(nullptr), notifier(nullptr),
       connected(false), nocheckp(false),
       triedlogin(false), triedpass(false), firsttry(true),
-      curauth(0), nullauth(false),
+      curauth(nullptr), nullauth(false),
       loginp("ogin:\\s*$"), passp("assword:\\s*$")
 {
     setSocket(new QTcpSocket(this));
@@ -610,7 +610,7 @@ void QtTelnetPrivate::consume()
 {
     const QByteArray data = buffer.readAll();
     int currpos = 0;
-    int prevpos = -1;;
+    int prevpos = -1;
     while (prevpos < currpos && currpos < data.size()) {
         prevpos = currpos;
         const uchar c = uchar(data[currpos]);
@@ -653,7 +653,7 @@ QByteArray QtTelnetPrivate::getSubOption(const QByteArray &data)
 
 void QtTelnetPrivate::parseSubNAWS(const QByteArray &data)
 {
-    Q_UNUSED(data);
+    Q_UNUSED(data)
 }
 
 void QtTelnetPrivate::parseSubTT(const QByteArray &data)
@@ -851,10 +851,10 @@ void QtTelnetPrivate::sendWindowSize()
     if (!q->isValidWindowSize())
         return;
 
-    short h = qToBigEndian(windowSize.height());
-    short w = qToBigEndian(windowSize.width());
+    const short h = short(qToBigEndian(windowSize.height()));
+    const short w = short(qToBigEndian(windowSize.width()));
     const char c[9] = { char(Common::IAC), char(Common::SB), char(Common::NAWS),
-                        (w & 0x00ff), (w >> 8), (h & 0x00ff), (h >> 8),
+                        char(w & 0x00ff), char(w >> 8), char(h & 0x00ff), char(h >> 8),
                         char(Common::IAC), char(Common::SE) };
     sendCommand(c, sizeof(c));
 }
@@ -952,7 +952,7 @@ void QtTelnetPrivate::socketException(int)
 void QtTelnetPrivate::socketConnectionClosed()
 {
     delete notifier;
-    notifier = 0;
+    notifier = nullptr;
     connected = false;
     emit q->loggedOut();
 }
@@ -1058,7 +1058,7 @@ void QtTelnet::close()
     if (!d->connected)
         return;
     delete d->notifier;
-    d->notifier = 0;
+    d->notifier = nullptr;
     d->connected = false;
     d->socket->close();
     emit loggedOut();
@@ -1242,7 +1242,7 @@ void QtTelnet::sendSync()
     d->socket->flush(); // Force the socket to send all the pending data before
                         // sending the SYNC sequence.
     int s = d->socket->socketDescriptor();
-    char tosend = (char)Common::DM;
+    //char tosend = char(Common::DM);
     //::send(s, &tosend, 1, MSG_OOB); // Send the DATA MARK as out-of-band
 }
 
