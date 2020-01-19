@@ -566,8 +566,8 @@ void MainWidget::writeDefaultSettings()
 	defaultSettings["first-run"] = "true";
 	defaultSettings["openocd-bin-path"] = "/usr/bin/openocd";
 	
-	defaultSettings["lineEditOcdInterfaceConfig"] = "/usr/local/share/openocd/scripts/interface/openocd-usb.cfg";
-	defaultSettings["lineEditOcdTargetConfig"] = "/usr/local/share/openocd/scripts/target/sam7se512.cfg";
+	defaultSettings["lineEditOcdInterfaceConfig"] = "/usr/share/openocd/scripts/interface/ftdi/openocd-usb.cfg";
+	defaultSettings["lineEditOcdTargetConfig"] = "/usr/share/openocd/scripts/target/sam7se512.cfg";
 	
 	defaultSettings["lineEditHost"] = "localhost";
 	defaultSettings["lineEditPort"] = "4444";
