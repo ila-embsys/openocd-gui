@@ -17,6 +17,8 @@ jobs:
       
     steps:
     - uses: actions/checkout@v2
+      with:
+        path: /home/user
         
     - name: qmake
       run: qmake
