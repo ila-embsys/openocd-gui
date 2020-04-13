@@ -12,17 +12,22 @@ jobs:
     
     container:
       image: rabits/qt:5.14-desktop
-      volumes: [project:/home/user/project]
+      volumes:
+        - project:/home/user
       
     steps:
     - uses: actions/checkout@v2
-      with: 
-        path: project
         
     - name: qmake
       run: qmake
-      working-directory: project
       
     - name: make
-      run: make`
-      working-directory: project
+      run: make
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: openocdgui
+        # Directory containing files to upload
+        path: .
