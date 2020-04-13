@@ -14,7 +14,7 @@ jobs:
       image: rabits/qt:5.14-desktop
       volumes:
         - project:/home/user
-        - wksp:/__w/openocd-gui/openocd-gui/
+        - wksp:/__w/openocd-gui
       
     steps:
     - uses: actions/checkout@v2
