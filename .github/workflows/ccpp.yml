@@ -15,6 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      env:
+        GIT_TRACE: 1
+        GIT_CURL_VERBOSE: 1
       
     - name: qmake
       run: x86_64-w64-mingw32-qmake-qt5
@@ -26,6 +29,6 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: openocdgui
+        name: openocdgui.exe
         # Directory containing files to upload
-        path: .
+        path: ./release
