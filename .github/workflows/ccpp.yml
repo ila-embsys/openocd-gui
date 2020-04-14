@@ -9,22 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+         
     container:
       image: rabits/qt:5.14-desktop
-      volumes:
-        - project:/home/user
-        - wksp:/__w/openocd-gui
-      
+
     steps:
     - uses: actions/checkout@v2
-        
+      
     - name: qmake
-      run: qmake
+      run: x86_64-w64-mingw32-qmake-qt5
       
     - name: make
       run: make
-
+      
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
