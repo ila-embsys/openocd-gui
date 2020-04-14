@@ -382,7 +382,7 @@ void MainWidget::ocdDaemonStart() // start OpenOCD with Config
         arguments << "-f" << interfaceConfig << "-f" << targetConfig;
         openOCD->start(path, arguments);
         main->textEditOcdTerminal->append("GUI: Starting OpenOCD daemon...");
-		main->textEditOcdTerminal->append(path + arguments.join(" "));
+		main->textEditOcdTerminal->append(path + " " + arguments.join(" "));
         main->pushButtonOcdDaemonStart->setText("Stop");
     }
     else
@@ -564,15 +564,15 @@ void MainWidget::writeDefaultSettings()
 	
 	defaultSettings.clear();
 	defaultSettings["first-run"] = "true";
-	defaultSettings["openocd-bin-path"] = "/usr/bin/openocd";
+	defaultSettings["openocd-bin-path"] = "openocd";
 	
-	defaultSettings["lineEditOcdInterfaceConfig"] = "/usr/share/openocd/scripts/interface/ftdi/openocd-usb.cfg";
-	defaultSettings["lineEditOcdTargetConfig"] = "/usr/share/openocd/scripts/target/sam7se512.cfg";
+	defaultSettings["lineEditOcdInterfaceConfig"] = "interface/stlink.cfg";
+	defaultSettings["lineEditOcdTargetConfig"] = "target/stm32f2x.cfg";
 	
 	defaultSettings["lineEditHost"] = "localhost";
 	defaultSettings["lineEditPort"] = "4444";
 	defaultSettings["checkBoxErase"] = "false";
-	defaultSettings["lineEditGuiConfig"] = "/usr/share/openocd-gui/at91sam7.openocd-gui.conf";
+	defaultSettings["lineEditGuiConfig"] = "at91sam7.openocd-gui.conf";
 	
 	for(int i=0; i<defaultSettings.size(); i++){
 		QString defKey = defaultSettings.keys().at(i);
