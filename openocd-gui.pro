@@ -7,6 +7,12 @@ TARGET = openocdgui
 DEPENDPATH += . QtTelnet
 INCLUDEPATH += . QtTelnet
 
+CONFIG += static
+
+# Add libharfbuzz and libfreetype twice to resolve chicken egg problem
+LIBS += -lharfbuzz -lfreetype
+LIBS_PRIVATE += -lharfbuzz -lfreetype
+
 QT += widgets
 QT += network
 HEADERS += mainwidget.h QtTelnet/qttelnet.h
