@@ -12,11 +12,7 @@ jobs:
          
     container:
       image: haffmans/mingw-qt5
-#       volumes: 
-#         - /home/runner/work/container-data:/__w/openocd-gui
       options: --user=root
-#       env:
-#         GITHUB_WORKSPACE: /home/devel
 
     steps:
     - uses: actions/checkout@v2
@@ -30,10 +26,13 @@ jobs:
     - name: make
       run: make
       
+    - name: prepare artifacts
+      run: mkdir -p bin && mv release/openocdgui.exe bin
+      
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
         name: openocdgui.exe
         # Directory containing files to upload
-        path: ./release
+        path: ./bin
