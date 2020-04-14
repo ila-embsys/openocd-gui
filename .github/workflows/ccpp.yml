@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
          
     container:
-      image: rabits/qt:5.14-desktop
+      image: haffmans/mingw-qt5
 
     steps:
     - uses: actions/checkout@v2
