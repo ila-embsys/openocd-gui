@@ -13,7 +13,7 @@ jobs:
     container:
       image: haffmans/mingw-qt5
       volumes: 
-        - wksp:/__w/openocd-gui
+        - .:/__w/openocd-gui
 #       env:
 #         GITHUB_WORKSPACE: /home/devel
 
