@@ -1,0 +1,38 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+         
+    container:
+      image: haffmans/mingw-qt5
+      options: --user=root
+
+    steps:
+    - uses: actions/checkout@v2
+      env:
+        GIT_TRACE: 1
+        GIT_CURL_VERBOSE: 1
+      
+    - name: qmake
+      run: x86_64-w64-mingw32-qmake-qt5
+      
+    - name: make
+      run: make
+      
+    - name: prepare artifacts
+      run: mkdir -p bin && mv release/openocdgui.exe bin
+      
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: openocdgui
+        # Directory containing files to upload
+        path: ./bin
