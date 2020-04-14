@@ -12,6 +12,8 @@ jobs:
          
     container:
       image: haffmans/mingw-qt5
+      env:
+        GITHUB_WORKSPACE: /home/devel
 
     steps:
     - uses: actions/checkout@v2
